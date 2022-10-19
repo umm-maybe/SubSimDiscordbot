@@ -4,9 +4,9 @@ import random
 from simpletransformers.language_generation import LanguageGenerationModel
 import discord
 
-TOKEN = 'REPLACEME' #Put your token Here!
-PATH_TO_MODEL = "REPLACEME" #Put the path to your model here!
-DEDICATED_CHANNEL_NAME = 'REPLACEME' #Put the name of the channel in your server where you want the bot to chat!
+TOKEN = '' #Put your token Here!
+PATH_TO_MODEL = "SSI/Godless_GPT2_Bot" #Put the path to your model here!
+DEDICATED_CHANNEL_NAME = 'bot-purgatory' #Put the name of the channel in your server where you want the bot to chat!
 
 #Make false if you dont want to use ur gpu.
 USE_CUDA = True
@@ -16,8 +16,10 @@ USE_CUDA = True
 Might cause processing times to go up'''
 EXPERIMENTAL_MEMORY = True 
 EXPERIMENTAL_MEMORY_LENGTH = 500 #Max char length before memory resets. Higher numbers can heavily affect model inference times. Default 500
+intents = discord.Intents.default()
+intents.message_content = True
 
-client = discord.Client()
+client = discord.Client(intents=intents)
 @client.event
 async def on_ready():
     print(f'{client.user.name} has connected to Discord!')
@@ -35,11 +37,12 @@ def genCleanMessage(optPrompt):
         print('\nMEMORY:' + memory + '\n')
         model = LanguageGenerationModel("gpt2", PATH_TO_MODEL, use_cuda=USE_CUDA)
         text_generation_parameters = {
-			'max_length': 50,
+			'max_length': 250,
 			'num_return_sequences': 1,
 			'prompt': memory,
 			'temperature': 0.8, #0.8
 			'top_k': 40,
+            'repetition_penalty': 1.08
 	}
         output_list = model.generate(prompt=memory, args=text_generation_parameters)
         response = output_list[0]
